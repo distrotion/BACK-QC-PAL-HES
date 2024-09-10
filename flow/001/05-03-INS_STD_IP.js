@@ -4,7 +4,7 @@ var mongodb = require('../../function/mongodb');
 var mssql = require('../../function/mssql');
 var request = require('request');
 
-let masterDB = "master_FN";
+let masterDB = "master_IP";
 let PATTERN = "PATTERN";
 //
 let GRAPH_TABLE = "GRAPH_TABLE";
@@ -25,15 +25,15 @@ let CORETYPE = "CORETYPE";
 let FREQUENCY = "FREQUENCY";
 let PATTERN_01 = "PATTERN_01";
 
-//FINAL--->INCOMMING
-//_FN--->_IC
+//INPROCESS--->INPROCESS
+//_IP--->_IP
 
 
 
 
-router.post('/INSPECTION_FINAL_GET_STEP1', async (req, res) => {
+router.post('/INSPECTION_INPROCESS_GET_STEP1', async (req, res) => {
   //-------------------------------------
-  console.log("--INSPECTION_FINAL_GET_STEP1--");
+  console.log("--INSPECTION_INPROCESS_GET_STEP1--");
   input = req.body;
   output2 = [];
   //-------------------------------------
@@ -52,13 +52,13 @@ router.post('/INSPECTION_FINAL_GET_STEP1', async (req, res) => {
   return res.json({ "ITEMs": output2 });
 });
 
-router.get('/FINALMASTER', async (req, res) => {
+router.get('/INPROCESSMASTER', async (req, res) => {
   return res.json("READY");
 });
 
-router.post('/INSPECTION_FINAL_GET_STEP2', async (req, res) => {
+router.post('/INSPECTION_INPROCESS_GET_STEP2', async (req, res) => {
   //-------------------------------------
-  console.log("--INSPECTION_FINAL_GET_STEP2--");
+  console.log("--INSPECTION_INPROCESS_GET_STEP2--");
   input = req.body;
   let RESULTFORMATdata = "";
   let TYPEdata = "";
@@ -160,9 +160,9 @@ router.post('/INSPECTION_FINAL_GET_STEP2', async (req, res) => {
 
 });
 
-router.post('/GET_FINAL_DOCUMENT', async (req, res) => {
+router.post('/GET_INPROCESS_DOCUMENT', async (req, res) => {
   //-------------------------------------
-  console.log("--GET_FINAL_DOCUMENT--");
+  console.log("--GET_INPROCESS_DOCUMENT--");
   input = req.body;
   output = { "DOCUMENT": "" }
   //-------------------------------------
@@ -178,9 +178,9 @@ router.post('/GET_FINAL_DOCUMENT', async (req, res) => {
   return res.json(output);
 });
 
-router.post('/GET_FINAL_COMMENT', async (req, res) => {
+router.post('/GET_INPROCESS_COMMENT', async (req, res) => {
   //-------------------------------------
-  console.log("--GET_FINAL_COMMENT--");
+  console.log("--GET_INPROCESS_COMMENT--");
   input = req.body;
   output = { "COMMENT": "" }
   //-------------------------------------
@@ -196,9 +196,9 @@ router.post('/GET_FINAL_COMMENT', async (req, res) => {
   return res.json(output);
 });
 
-router.post('/GET_FINAL_CALCULATE', async (req, res) => {
+router.post('/GET_INPROCESS_CALCULATE', async (req, res) => {
   //-------------------------------------
-  console.log("--GET_FINAL_CALCULATE--");
+  console.log("--GET_INPROCESS_CALCULATE--");
   input = req.body;
   output = {}
   //-------------------------------------
@@ -215,9 +215,9 @@ router.post('/GET_FINAL_CALCULATE', async (req, res) => {
   return res.json(output);
 });
 
-router.post('/GET_FINAL_MATCP_DATA', async (req, res) => {
+router.post('/GET_INPROCESS_MATCP_DATA', async (req, res) => {
   //-------------------------------------
-  console.log("--GET_FINAL_MATCP_DATA--");
+  console.log("--GET_INPROCESS_MATCP_DATA--");
   input = req.body;
   output = []
   //-------------------------------------
@@ -256,9 +256,9 @@ router.post('/GET_FINAL_MATCP_DATA', async (req, res) => {
 
 
 
-router.post('/INSPECTION_FINAL_GETSPEC', async (req, res) => {
+router.post('/INSPECTION_INPROCESS_GETSPEC', async (req, res) => {
   //-------------------------------------
-  console.log("--INSPECTION_FINAL_GETSPEC--");
+  console.log("--INSPECTION_INPROCESS_GETSPEC--");
   let input = req.body;
   let output = []
   //-------------------------------------
@@ -271,76 +271,74 @@ router.post('/INSPECTION_FINAL_GETSPEC', async (req, res) => {
   return res.json(output);
 });
 
-router.post('/FINAL_SAVE', async (req, res) => {
+router.post('/INPROCESS_SAVE', async (req, res) => {
   //-------------------------------------
-  console.log("--FINAL_SAVE--");
+  console.log("--INPROCESS_SAVE--");
   let input = req.body;
   let output = {}
   //-------------------------------------
   console.log(input);
-  if (input['CPorder'] != null && input['MASTERdatalist'] != null && input['editedItem_FN'] != null) {
+  if (input['CPorder'] != null && input['MASTERdatalist'] != null && input['editedItem_IP'] != null) {
     let findPATTERN = await mongodb.find(PATTERN, PATTERN_01, { "CP": input[`CPorder`]['CP'] });
     if (findPATTERN.length == 0) {
       let out = input['CPorder'];
       let newob = {
         'SEQ': 1,
         'TYPE': input.MASTERdatalist.TYPE,
-        'ITEMs': input.editedItem_FN.ITEMs,
+        'ITEMs': input.editedItem_IP.ITEMs,
         'RESULTFORMAT': input.MASTERdatalist.RESULTFORMAT,
         'GRAPHTYPE': input.MASTERdatalist.GRAPHTYPE,
         'INTERSECTION': input.MASTERdatalist.INTERSECTION,
-        'DOCUMENT': input.editedItem_FN.DOCUMENT,
-        'SCMARK': input.editedItem_FN.SCMARK,
-        'METHOD': input.editedItem_FN.METHOD,
-        'INSTRUMENTS': input.editedItem_FN.INSTRUMENTS,
-        'SPECIFICATION': input.editedItem_FN.SPECIFICATION,
-        'SPECIFICATIONve': input.editedItem_FN.SPECIFICATIONve,
-        'UNIT': input.editedItem_FN.UNIT,
-        'POINTPCS': input.editedItem_FN.POINTPCS,
-        'POINT': input.editedItem_FN.POINT,
-        'PCS': input.editedItem_FN.PCS,
-        'FREQUENCY': input.editedItem_FN.FREQUENCY,
-        'MODE': input.editedItem_FN.MODE,
-        'REMARK': input.editedItem_FN.REMARK,
-        'LOAD': input.editedItem_FN.LOAD,
-        'CONVERSE': input.editedItem_FN.CONVERSE,
-        'GRAPH_TABLE_FN': input.editedItem_FN.GRAPH_TABLE_FN,
+        'DOCUMENT': input.editedItem_IP.DOCUMENT,
+        'SCMARK': input.editedItem_IP.SCMARK,
+        'METHOD': input.editedItem_IP.METHOD,
+        'INSTRUMENTS': input.editedItem_IP.INSTRUMENTS,
+        'SPECIFICATION': input.editedItem_IP.SPECIFICATION,
+        'SPECIFICATIONve': input.editedItem_IP.SPECIFICATIONve,
+        'UNIT': input.editedItem_IP.UNIT,
+        'POINTPCS': input.editedItem_IP.POINTPCS,
+        'POINT': input.editedItem_IP.POINT,
+        'PCS': input.editedItem_IP.PCS,
+        'FREQUENCY': input.editedItem_IP.FREQUENCY,
+        'MODE': input.editedItem_IP.MODE,
+        'REMARK': input.editedItem_IP.REMARK,
+        'LOAD': input.editedItem_IP.LOAD,
+        'CONVERSE': input.editedItem_IP.CONVERSE,
+        'GRAPH_TABLE_IP': input.editedItem_IP.GRAPH_TABLE_IP,
 
 
-        "SWreport": input.editedItem_FN.SWreport?? "",
-        "K1b": input.editedItem_FN.K1b?? "",
-        "K1v": input.editedItem_FN.K1v?? "",
+        "SWreport": input.editedItem_IP.SWreport ?? "",
+        "K1b": input.editedItem_IP.K1b ?? "",
+        "K1v": input.editedItem_IP.K1v ?? "",
         //--------------
-        "AQL": input.editedItem_FN.AQL ?? "",
-        "AQLV": input.editedItem_FN.AQLV ?? "",
-        "CONVERSEDATA": input.editedItem_FN.CONVERSEDATA ?? "",
-        "SUMDATA": input.editedItem_FN.SUMDATA ?? "",
-        "SRAWDATA": input.editedItem_FN.SRAWDATA ?? "",
-        "SCMARKTYPE": input.editedItem_FN.SCMARKTYPE ?? "",
-        "SUMDATATEXT": input.editedItem_FN.SUMDATATEXT ?? "",
+        "AQL": input.editedItem_IP.AQL ?? "",
+        "AQLV": input.editedItem_IP.AQLV ?? "",
+        "CONVERSEDATA": input.editedItem_IP.CONVERSEDATA ?? "",
+        "SUMDATA": input.editedItem_IP.SUMDATA ?? "",
+        "SRAWDATA": input.editedItem_IP.SRAWDATA ?? "",
+        "SCMARKTYPE": input.editedItem_IP.SCMARKTYPE ?? "",
+        "SUMDATATEXT": input.editedItem_IP.SUMDATATEXT ?? "",
 
-        "VARX": input.editedItem_FN.VARX ?? "",
-        "VARY": input.editedItem_FN.VARY ?? "",
-        "VARZ": input.editedItem_FN.VARZ ?? "",
-        "VARI": input.editedItem_FN.VARI ?? "",
+        "CONIP": input.editedItem_IP.CONIP ?? "",
+        "CONIPITEM": input.editedItem_IP.CONIPITEM ?? "",
+        "CONIPITEMVAR": input.editedItem_IP.CONIPITEMVAR ?? "",
 
-        "shape": input.editedItem_FN.shape ?? "",
 
       };
 
 
-      out[`FINAL`] = [newob]
+      out[`INPROCESS`] = [newob]
 
       let updatePATTERN = await mongodb.insertMany(PATTERN, PATTERN_01, [out]);
       return res.json("ok");
 
-    } else if ('FINAL' in findPATTERN[0]) {
+    } else if ('INPROCESS' in findPATTERN[0]) {
 
 
       PATTERN_create_buff = input
       ans = false
-      for (i = 0; i < findPATTERN[0].FINAL.length; i++) {
-        if (PATTERN_create_buff.editedItem_FN.ITEMs === findPATTERN[0].FINAL[i].ITEMs) {
+      for (i = 0; i < findPATTERN[0].INPROCESS.length; i++) {
+        if (PATTERN_create_buff.editedItem_IP.ITEMs === findPATTERN[0].INPROCESS[i].ITEMs) {
           ans = true
           break
         }
@@ -349,169 +347,164 @@ router.post('/FINAL_SAVE', async (req, res) => {
         let input2 = findPATTERN;
         let out = input['CPorder'];
         let CP = input2[0].CP;
-        let FINAL = input2[0].FINAL;
+        let INPROCESS = input2[0].INPROCESS;
         let NEXT_I = i + 1
         let n = NEXT_I;
         var newob = {
           'SEQ': NEXT_I,
           'TYPE': input.MASTERdatalist.TYPE,
-          'ITEMs': input.editedItem_FN.ITEMs,
+          'ITEMs': input.editedItem_IP.ITEMs,
           'RESULTFORMAT': input.MASTERdatalist.RESULTFORMAT,
           'GRAPHTYPE': input.MASTERdatalist.GRAPHTYPE,
           'INTERSECTION': input.MASTERdatalist.INTERSECTION,
-          'DOCUMENT': input.editedItem_FN.DOCUMENT,
-          'SCMARK': input.editedItem_FN.SCMARK,
-          'METHOD': input.editedItem_FN.METHOD,
-          'INSTRUMENTS': input.editedItem_FN.INSTRUMENTS,
-          'SPECIFICATION': input.editedItem_FN.SPECIFICATION,
-          'SPECIFICATIONve': input.editedItem_FN.SPECIFICATIONve,
-          'UNIT': input.editedItem_FN.UNIT,
-          'POINTPCS': input.editedItem_FN.POINTPCS,
-          'POINT': input.editedItem_FN.POINT,
-          'PCS': input.editedItem_FN.PCS,
-          'FREQUENCY': input.editedItem_FN.FREQUENCY,
-          'MODE': input.editedItem_FN.MODE,
-          'REMARK': input.editedItem_FN.REMARK,
-          'LOAD': input.editedItem_FN.LOAD,
-          'CONVERSE': input.editedItem_FN.CONVERSE,
-          'GRAPH_TABLE_FN': input.editedItem_FN.GRAPH_TABLE_FN,
+          'DOCUMENT': input.editedItem_IP.DOCUMENT,
+          'SCMARK': input.editedItem_IP.SCMARK,
+          'METHOD': input.editedItem_IP.METHOD,
+          'INSTRUMENTS': input.editedItem_IP.INSTRUMENTS,
+          'SPECIFICATION': input.editedItem_IP.SPECIFICATION,
+          'SPECIFICATIONve': input.editedItem_IP.SPECIFICATIONve,
+          'UNIT': input.editedItem_IP.UNIT,
+          'POINTPCS': input.editedItem_IP.POINTPCS,
+          'POINT': input.editedItem_IP.POINT,
+          'PCS': input.editedItem_IP.PCS,
+          'FREQUENCY': input.editedItem_IP.FREQUENCY,
+          'MODE': input.editedItem_IP.MODE,
+          'REMARK': input.editedItem_IP.REMARK,
+          'LOAD': input.editedItem_IP.LOAD,
+          'CONVERSE': input.editedItem_IP.CONVERSE,
+          'GRAPH_TABLE_IP': input.editedItem_IP.GRAPH_TABLE_IP,
 
-          "SWreport": input.editedItem_FN.SWreport?? "",
-          "K1b": input.editedItem_FN.K1b?? "",
-          "K1v": input.editedItem_FN.K1v?? "",
+          "SWreport": input.editedItem_IP.SWreport ?? "",
+          "K1b": input.editedItem_IP.K1b ?? "",
+          "K1v": input.editedItem_IP.K1v ?? "",
           //--------------
-          "AQL": input.editedItem_FN.AQL ?? "",
-          "AQLV": input.editedItem_FN.AQLV ?? "",
-          "CONVERSEDATA": input.editedItem_FN.CONVERSEDATA ?? "",
-          "SUMDATA": input.editedItem_FN.SUMDATA ?? "",
-          "SRAWDATA": input.editedItem_FN.SRAWDATA ?? "",
-          "SCMARKTYPE": input.editedItem_FN.SCMARKTYPE ?? "",
-          "SUMDATATEXT": input.editedItem_FN.SUMDATATEXT ?? "",
+          "AQL": input.editedItem_IP.AQL ?? "",
+          "AQLV": input.editedItem_IP.AQLV ?? "",
+          "CONVERSEDATA": input.editedItem_IP.CONVERSEDATA ?? "",
+          "SUMDATA": input.editedItem_IP.SUMDATA ?? "",
+          "SRAWDATA": input.editedItem_IP.SRAWDATA ?? "",
+          "SCMARKTYPE": input.editedItem_IP.SCMARKTYPE ?? "",
+          "SUMDATATEXT": input.editedItem_IP.SUMDATATEXT ?? "",
 
-          "VARX": input.editedItem_FN.VARX ?? "",
-          "VARY": input.editedItem_FN.VARY ?? "",
-          "VARZ": input.editedItem_FN.VARZ ?? "",
-          "VARI": input.editedItem_FN.VARI ?? "",
-          "shape": input.editedItem_FN.shape ?? "",
+          "CONIP": input.editedItem_IP.CONIP ?? "",
+          "CONIPITEM": input.editedItem_IP.CONIPITEM ?? "",
+          "CONIPITEMVAR": input.editedItem_IP.CONIPITEMVAR ?? "",
         };
 
 
 
-        FINAL[n - 1] = newob;
-        out = [{ 'CP': CP }, { $set: { 'FINAL': FINAL } }]
+        INPROCESS[n - 1] = newob;
+        out = [{ 'CP': CP }, { $set: { 'INPROCESS': INPROCESS } }]
         console.log(out);
 
-        let updatePATTERN = await mongodb.update(PATTERN, PATTERN_01, { 'CP': CP }, { $set: { 'FINAL': FINAL } });
+        let updatePATTERN = await mongodb.update(PATTERN, PATTERN_01, { 'CP': CP }, { $set: { 'INPROCESS': INPROCESS } });
         return res.json("ok");
 
       } else {
         let input2 = findPATTERN;
         let out = input['CPorder'];
         let CP = input2[0].CP;
-        let FINAL = input2[0].FINAL;
-        let n = FINAL.length;
+        let INPROCESS = input2[0].INPROCESS;
+        let n = INPROCESS.length;
         var newob = {
-          'SEQ': FINAL.length + 1,
+          'SEQ': INPROCESS.length + 1,
           'TYPE': input.MASTERdatalist.TYPE,
-          'ITEMs': input.editedItem_FN.ITEMs,
+          'ITEMs': input.editedItem_IP.ITEMs,
           'RESULTFORMAT': input.MASTERdatalist.RESULTFORMAT,
           'GRAPHTYPE': input.MASTERdatalist.GRAPHTYPE,
           'INTERSECTION': input.MASTERdatalist.INTERSECTION,
-          'DOCUMENT': input.editedItem_FN.DOCUMENT,
-          'SCMARK': input.editedItem_FN.SCMARK,
-          'METHOD': input.editedItem_FN.METHOD,
-          'INSTRUMENTS': input.editedItem_FN.INSTRUMENTS,
-          'SPECIFICATION': input.editedItem_FN.SPECIFICATION,
-          'SPECIFICATIONve': input.editedItem_FN.SPECIFICATIONve,
-          'UNIT': input.editedItem_FN.UNIT,
-          'POINTPCS': input.editedItem_FN.POINTPCS,
-          'POINT': input.editedItem_FN.POINT,
-          'PCS': input.editedItem_FN.PCS,
-          'FREQUENCY': input.editedItem_FN.FREQUENCY,
-          'MODE': input.editedItem_FN.MODE,
-          'REMARK': input.editedItem_FN.REMARK,
-          'LOAD': input.editedItem_FN.LOAD,
-          'CONVERSE': input.editedItem_FN.CONVERSE,
-          'GRAPH_TABLE_FN': input.editedItem_FN.GRAPH_TABLE_FN,
+          'DOCUMENT': input.editedItem_IP.DOCUMENT,
+          'SCMARK': input.editedItem_IP.SCMARK,
+          'METHOD': input.editedItem_IP.METHOD,
+          'INSTRUMENTS': input.editedItem_IP.INSTRUMENTS,
+          'SPECIFICATION': input.editedItem_IP.SPECIFICATION,
+          'SPECIFICATIONve': input.editedItem_IP.SPECIFICATIONve,
+          'UNIT': input.editedItem_IP.UNIT,
+          'POINTPCS': input.editedItem_IP.POINTPCS,
+          'POINT': input.editedItem_IP.POINT,
+          'PCS': input.editedItem_IP.PCS,
+          'FREQUENCY': input.editedItem_IP.FREQUENCY,
+          'MODE': input.editedItem_IP.MODE,
+          'REMARK': input.editedItem_IP.REMARK,
+          'LOAD': input.editedItem_IP.LOAD,
+          'CONVERSE': input.editedItem_IP.CONVERSE,
+          'GRAPH_TABLE_IP': input.editedItem_IP.GRAPH_TABLE_IP,
 
-          "SWreport": input.editedItem_FN.SWreport?? "",
-          "K1b": input.editedItem_FN.K1b?? "",
-          "K1v": input.editedItem_FN.K1v?? "",
+          "SWreport": input.editedItem_IP.SWreport ?? "",
+          "K1b": input.editedItem_IP.K1b ?? "",
+          "K1v": input.editedItem_IP.K1v ?? "",
           //--------------
-          "AQL": input.editedItem_FN.AQL ?? "",
-          "AQLV": input.editedItem_FN.AQLV ?? "",
-          "CONVERSEDATA": input.editedItem_FN.CONVERSEDATA ?? "",
-          "SUMDATA": input.editedItem_FN.SUMDATA ?? "",
-          "SRAWDATA": input.editedItem_FN.SRAWDATA ?? "",
-          "SCMARKTYPE": input.editedItem_FN.SCMARKTYPE ?? "",
-          "SUMDATATEXT": input.editedItem_FN.SUMDATATEXT ?? "",
+          "AQL": input.editedItem_IP.AQL ?? "",
+          "AQLV": input.editedItem_IP.AQLV ?? "",
+          "CONVERSEDATA": input.editedItem_IP.CONVERSEDATA ?? "",
+          "SUMDATA": input.editedItem_IP.SUMDATA ?? "",
+          "SRAWDATA": input.editedItem_IP.SRAWDATA ?? "",
+          "SCMARKTYPE": input.editedItem_IP.SCMARKTYPE ?? "",
+          "SUMDATATEXT": input.editedItem_IP.SUMDATATEXT ?? "",
 
-          "VARX": input.editedItem_FN.VARX ?? "",
-          "VARY": input.editedItem_FN.VARY ?? "",
-          "VARZ": input.editedItem_FN.VARZ ?? "",
-          "VARI": input.editedItem_FN.VARI ?? "",
-          "shape": input.editedItem_FN.shape ?? "",
+          "CONIP": input.editedItem_IP.CONIP ?? "",
+          "CONIPITEM": input.editedItem_IP.CONIPITEM ?? "",
+          "CONIPITEMVAR": input.editedItem_IP.CONIPITEMVAR ?? "",
         };
-        FINAL[n] = newob;
-        out = [{ 'CP': CP }, { $set: { 'FINAL': FINAL } }]
+        INPROCESS[n] = newob;
+        out = [{ 'CP': CP }, { $set: { 'INPROCESS': INPROCESS } }]
         console.log(out);
 
-        let updatePATTERN = await mongodb.update(PATTERN, PATTERN_01, { 'CP': CP }, { $set: { 'FINAL': FINAL } });
+        let updatePATTERN = await mongodb.update(PATTERN, PATTERN_01, { 'CP': CP }, { $set: { 'INPROCESS': INPROCESS } });
         return res.json("ok");
 
       }
 
-    } else if (('INCOMMING' in findPATTERN[0])) {
+      // } else if (('INPROCESS' in findPATTERN[0])) {
+    } else {
 
       let input2 = findPATTERN;
       let out = input['CPorder'];
       let CP = input2[0].CP;
-      let FINAL = input2[0].FINAL;
+      let INPROCESS = input2[0].INPROCESS;
 
-      FINAL = [{
+      INPROCESS = [{
         'SEQ': 1,
         'TYPE': input.MASTERdatalist.TYPE,
-        'ITEMs': input.editedItem_FN.ITEMs,
+        'ITEMs': input.editedItem_IP.ITEMs,
         'RESULTFORMAT': input.MASTERdatalist.RESULTFORMAT,
         'GRAPHTYPE': input.MASTERdatalist.GRAPHTYPE,
         'INTERSECTION': input.MASTERdatalist.INTERSECTION,
-        'DOCUMENT': input.editedItem_FN.DOCUMENT,
-        'SCMARK': input.editedItem_FN.SCMARK,
-        'METHOD': input.editedItem_FN.METHOD,
-        'INSTRUMENTS': input.editedItem_FN.INSTRUMENTS,
-        'SPECIFICATION': input.editedItem_FN.SPECIFICATION,
-        'SPECIFICATIONve': input.editedItem_FN.SPECIFICATIONve,
-        'UNIT': input.editedItem_FN.UNIT,
-        'POINTPCS': input.editedItem_FN.POINTPCS,
-        'POINT': input.editedItem_FN.POINT,
-        'PCS': input.editedItem_FN.PCS,
-        'FREQUENCY': input.editedItem_FN.FREQUENCY,
-        'MODE': input.editedItem_FN.MODE,
-        'REMARK': input.editedItem_FN.REMARK,
-        'LOAD': input.editedItem_FN.LOAD,
-        'CONVERSE': input.editedItem_FN.CONVERSE,
-        'GRAPH_TABLE_FN': input.editedItem_FN.GRAPH_TABLE_FN,
+        'DOCUMENT': input.editedItem_IP.DOCUMENT,
+        'SCMARK': input.editedItem_IP.SCMARK,
+        'METHOD': input.editedItem_IP.METHOD,
+        'INSTRUMENTS': input.editedItem_IP.INSTRUMENTS,
+        'SPECIFICATION': input.editedItem_IP.SPECIFICATION,
+        'SPECIFICATIONve': input.editedItem_IP.SPECIFICATIONve,
+        'UNIT': input.editedItem_IP.UNIT,
+        'POINTPCS': input.editedItem_IP.POINTPCS,
+        'POINT': input.editedItem_IP.POINT,
+        'PCS': input.editedItem_IP.PCS,
+        'FREQUENCY': input.editedItem_IP.FREQUENCY,
+        'MODE': input.editedItem_IP.MODE,
+        'REMARK': input.editedItem_IP.REMARK,
+        'LOAD': input.editedItem_IP.LOAD,
+        'CONVERSE': input.editedItem_IP.CONVERSE,
+        'GRAPH_TABLE_IP': input.editedItem_IP.GRAPH_TABLE_IP,
 
-        "SWreport": input.editedItem_FN.SWreport?? "",
-        "K1b": input.editedItem_FN.K1b?? "",
-        "K1v": input.editedItem_FN.K1v?? "",
+        "SWreport": input.editedItem_IP.SWreport ?? "",
+        "K1b": input.editedItem_IP.K1b ?? "",
+        "K1v": input.editedItem_IP.K1v ?? "",
         //--------------
-        "AQL": input.editedItem_FN.AQL ?? "",
-        "AQLV": input.editedItem_FN.AQLV ?? "",
-        "CONVERSEDATA": input.editedItem_FN.CONVERSEDATA ?? "",
-        "SUMDATA": input.editedItem_FN.SUMDATA ?? "",
-        "SRAWDATA": input.editedItem_FN.SRAWDATA ?? "",
-        "SCMARKTYPE": input.editedItem_FN.SCMARKTYPE ?? "",
-        "SUMDATATEXT": input.editedItem_FN.SUMDATATEXT ?? "",
+        "AQL": input.editedItem_IP.AQL ?? "",
+        "AQLV": input.editedItem_IP.AQLV ?? "",
+        "CONVERSEDATA": input.editedItem_IP.CONVERSEDATA ?? "",
+        "SUMDATA": input.editedItem_IP.SUMDATA ?? "",
+        "SRAWDATA": input.editedItem_IP.SRAWDATA ?? "",
+        "SCMARKTYPE": input.editedItem_IP.SCMARKTYPE ?? "",
+        "SUMDATATEXT": input.editedItem_IP.SUMDATATEXT ?? "",
 
-        "VARX": input.editedItem_FN.VARX ?? "",
-        "VARY": input.editedItem_FN.VARY ?? "",
-        "VARZ": input.editedItem_FN.VARZ ?? "",
-        "VARI": input.editedItem_FN.VARI ?? "",
-        "shape": input.editedItem_FN.shape ?? "",
+        "CONIP": input.editedItem_IP.CONIP ?? "",
+        "CONIPITEM": input.editedItem_IP.CONIPITEM ?? "",
+        "CONIPITEMVAR": input.editedItem_IP.CONIPITEMVAR ?? "",
       }];
 
-      let updatePATTERN = await mongodb.update(PATTERN, PATTERN_01, { 'CP': CP }, { $set: { 'FINAL': FINAL } });
+      let updatePATTERN = await mongodb.update(PATTERN, PATTERN_01, { 'CP': CP }, { $set: { 'INPROCESS': INPROCESS } });
       return res.json("ok");
     }
 
@@ -521,14 +514,14 @@ router.post('/FINAL_SAVE', async (req, res) => {
 });
 
 
-router.post('/FINAL_DELETE', async (req, res) => {
+router.post('/INPROCESS_DELETE', async (req, res) => {
   //-------------------------------------
-  console.log("--FINAL_DELETE--");
+  console.log("--INPROCESS_DELETE--");
   let input = req.body;
   let output = {}
   //-------------------------------------
   // console.log(input);
-  if (input['CPorder'] != null && input['MASTERdatalist'] != null && input['editedItem_FN'] != null) {
+  if (input['CPorder'] != null && input['MASTERdatalist'] != null && input['editedItem_IP'] != null) {
 
     let findPATTERN = await mongodb.find(PATTERN, PATTERN_01, { "CP": input[`CPorder`]['CP'] });
     console.log(findPATTERN);
@@ -536,7 +529,7 @@ router.post('/FINAL_DELETE', async (req, res) => {
 
       return res.json("nok");
 
-    } else if ('FINAL' in findPATTERN[0]) {
+    } else if ('INPROCESS' in findPATTERN[0]) {
 
 
 
@@ -544,27 +537,27 @@ router.post('/FINAL_DELETE', async (req, res) => {
 
       PATTERN_create_buff = input
 
-      for (i = 0; i < findPATTERN[0].FINAL.length; i++) {
-        console.log(PATTERN_create_buff.editedItem_FN.ITEMs)
-        if (PATTERN_create_buff.editedItem_FN.ITEMs === findPATTERN[0].FINAL[i].ITEMs) {
+      for (i = 0; i < findPATTERN[0].INPROCESS.length; i++) {
+        console.log(PATTERN_create_buff.editedItem_IP.ITEMs)
+        if (PATTERN_create_buff.editedItem_IP.ITEMs === findPATTERN[0].INPROCESS[i].ITEMs) {
 
 
 
           let input2 = findPATTERN;
           let out = input['CPorder'];
           let CP = input2[0].CP;
-          let FINAL = input2[0].FINAL;
+          let INPROCESS = input2[0].INPROCESS;
 
 
-          FINAL.splice(i, 1);
+          INPROCESS.splice(i, 1);
 
-          for (j = 0; j < FINAL.length; j++) {
-            FINAL[j].SEQ = j + 1;
+          for (j = 0; j < INPROCESS.length; j++) {
+            INPROCESS[j].SEQ = j + 1;
           }
 
-          out = [{ 'CP': CP }, { $set: { 'FINAL': FINAL } }]
+          out = [{ 'CP': CP }, { $set: { 'INPROCESS': INPROCESS } }]
 
-          let updatePATTERN = await mongodb.update(PATTERN, PATTERN_01, { 'CP': CP }, { $set: { 'FINAL': FINAL } });
+          let updatePATTERN = await mongodb.update(PATTERN, PATTERN_01, { 'CP': CP }, { $set: { 'INPROCESS': INPROCESS } });
           return res.json("ok");
           break
         }
